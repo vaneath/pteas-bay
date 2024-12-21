@@ -10,10 +10,13 @@ public class DeliveryManagerSingleUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI recipeNameText;
     [SerializeField] private Transform iconContainer;
     [SerializeField] private Transform iconTemplate;
+    [SerializeField] private Transform customerContainer;
+    [SerializeField] private Transform customerTemplate;
 
 
     private void Awake() {
         iconTemplate.gameObject.SetActive(false);
+        customerTemplate.gameObject.SetActive(false);
     }
 
     public void SetRecipeSO(RecipeSO recipeSO) {
@@ -29,6 +32,12 @@ public class DeliveryManagerSingleUI : MonoBehaviour {
             iconTransform.gameObject.SetActive(true);
             iconTransform.GetComponent<Image>().sprite = kitchenObjectSO.sprite;
         }
-    }
 
+        if (recipeSO.customer != null)
+        {
+            Transform customerTransform = Instantiate(customerTemplate, customerContainer);
+            customerTransform.gameObject.SetActive(true);
+            customerTransform.GetComponent<Image>().sprite = recipeSO.customer.customerSprite;                                                                   
+        }
+    }
 }

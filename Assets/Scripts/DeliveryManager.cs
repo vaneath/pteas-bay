@@ -16,6 +16,7 @@ public class DeliveryManager : MonoBehaviour {
 
 
     [SerializeField] private RecipeListSO recipeListSO;
+    [SerializeField] private CustomerListSO customerListSO;
 
 
     private List<RecipeSO> waitingRecipeSOList;
@@ -38,10 +39,24 @@ public class DeliveryManager : MonoBehaviour {
             spawnRecipeTimer = spawnRecipeTimerMax;
 
             if (KitchenGameManager.Instance.IsGamePlaying() && waitingRecipeSOList.Count < waitingRecipesMax) {
-                RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
+                /*RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
+
+                int randomIndex = UnityEngine.Random.Range(0, customerListSO.customerSOList.Count);
+                waitingRecipeSO.customer = customerListSO.customerSOList[randomIndex];
 
                 waitingRecipeSOList.Add(waitingRecipeSO);
 
+                OnRecipeSpawned?.Invoke(this, EventArgs.Empty);*/
+
+                RecipeSO originalRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
+                RecipeSO newRecipeSO = ScriptableObject.CreateInstance<RecipeSO>(); // Create a new instance
+
+                // Copy fields from original to new recipe (this assumes you have access to all fields)
+                newRecipeSO.recipeName = originalRecipeSO.recipeName;
+                newRecipeSO.kitchenObjectSOList = new List<KitchenObjectSO>(originalRecipeSO.kitchenObjectSOList); // Clone the list
+                newRecipeSO.customer = customerListSO.customerSOList[UnityEngine.Random.Range(0, customerListSO.customerSOList.Count)];
+
+                waitingRecipeSOList.Add(newRecipeSO);
                 OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
             }
         }
