@@ -10,5 +10,7 @@ public class RecipeSO : ScriptableObject {
     public CustomerSO customer;
     public string recipeName;
 
+    public float timerMax = 30f; // Total time for the recipe in seconds
+    [HideInInspector] public float timer; // Remaining time for the recipe
 
 }

@@ -12,6 +12,7 @@ public class DeliveryManagerSingleUI : MonoBehaviour {
     [SerializeField] private Transform iconTemplate;
     [SerializeField] private Transform customerContainer;
     [SerializeField] private Transform customerTemplate;
+    [SerializeField] private Image timerBar;
 
 
     private void Awake() {
@@ -21,6 +22,7 @@ public class DeliveryManagerSingleUI : MonoBehaviour {
 
     public void SetRecipeSO(RecipeSO recipeSO) {
         recipeNameText.text = recipeSO.recipeName;
+        //timerText.text = $"{recipeSO.timer:0.0}";
 
         foreach (Transform child in iconContainer) {
             if (child == iconTemplate) continue;
@@ -37,7 +39,24 @@ public class DeliveryManagerSingleUI : MonoBehaviour {
         {
             Transform customerTransform = Instantiate(customerTemplate, customerContainer);
             customerTransform.gameObject.SetActive(true);
-            customerTransform.GetComponent<Image>().sprite = recipeSO.customer.customerSprite;                                                                   
+            customerTransform.GetComponent<Image>().sprite = recipeSO.customer.customerSprite;
+        }
+    }
+
+    public void UpdateTimer(float remainingTime, float totalTime)
+    {
+        // Calculate fill amount as a value between 0 and 1
+        float fillAmount = remainingTime / totalTime;
+        timerBar.fillAmount = fillAmount; // Update fill amount of the timer image
+
+        // Change color based on fill amount
+        if (fillAmount > 0.5f)
+        {
+            timerBar.color = Color.Lerp(Color.yellow, Color.green, (fillAmount - 0.5f) * 2); // Green to Yellow
+        }
+        else
+        {
+            timerBar.color = Color.Lerp(Color.red, Color.yellow, fillAmount * 2); // Yellow to Red
         }
     }
 }

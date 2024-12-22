@@ -17,49 +17,65 @@ public class DeliveryManager : MonoBehaviour {
 
     [SerializeField] private RecipeListSO recipeListSO;
     [SerializeField] private CustomerListSO customerListSO;
+    [SerializeField] private DeliveryManagerUI deliveryManagerUI;
 
 
     private List<RecipeSO> waitingRecipeSOList;
     private float spawnRecipeTimer;
-    private float spawnRecipeTimerMax = 4f;
-    private int waitingRecipesMax = 4;
+    private float spawnRecipeTimerMax;
+    private int waitingRecipesMax = 3;
     private int successfulRecipesAmount;
+    private bool firstRecipeSpawned = false;
 
 
     private void Awake() {
         Instance = this;
-
-
+        spawnRecipeTimerMax = 4f;
         waitingRecipeSOList = new List<RecipeSO>();
     }
 
     private void Update() {
         spawnRecipeTimer -= Time.deltaTime;
-        if (spawnRecipeTimer <= 0f) {
-            spawnRecipeTimer = spawnRecipeTimerMax;
 
-            if (KitchenGameManager.Instance.IsGamePlaying() && waitingRecipeSOList.Count < waitingRecipesMax) {
-                /*RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
+        if (spawnRecipeTimer <= 0f || waitingRecipeSOList.Count == 0) {
+            spawnRecipeTimer = firstRecipeSpawned ? UnityEngine.Random.Range(10f,20f) : 4f;
 
-                int randomIndex = UnityEngine.Random.Range(0, customerListSO.customerSOList.Count);
-                waitingRecipeSO.customer = customerListSO.customerSOList[randomIndex];
-
-                waitingRecipeSOList.Add(waitingRecipeSO);
-
-                OnRecipeSpawned?.Invoke(this, EventArgs.Empty);*/
+            if ((KitchenGameManager.Instance.IsGamePlaying() && waitingRecipeSOList.Count < waitingRecipesMax) || waitingRecipeSOList.Count == 0 ) {
+                if (!firstRecipeSpawned)
+                {
+                    firstRecipeSpawned = true;
+                    spawnRecipeTimer = UnityEngine.Random.Range(10f, 20f);
+                }
 
                 RecipeSO originalRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
                 RecipeSO newRecipeSO = ScriptableObject.CreateInstance<RecipeSO>(); // Create a new instance
 
-                // Copy fields from original to new recipe (this assumes you have access to all fields)
                 newRecipeSO.recipeName = originalRecipeSO.recipeName;
                 newRecipeSO.kitchenObjectSOList = new List<KitchenObjectSO>(originalRecipeSO.kitchenObjectSOList); // Clone the list
                 newRecipeSO.customer = customerListSO.customerSOList[UnityEngine.Random.Range(0, customerListSO.customerSOList.Count)];
+                newRecipeSO.timerMax = UnityEngine.Random.Range(25f, 45f);
+                newRecipeSO.timer = newRecipeSO.timerMax;
 
                 waitingRecipeSOList.Add(newRecipeSO);
                 OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        for (int i = waitingRecipeSOList.Count - 1; i >= 0; i--)
+        {
+            RecipeSO recipeSO = waitingRecipeSOList[i];
+            recipeSO.timer -= Time.deltaTime; // Decrement timer
+
+            // Check if the recipe has expired
+            if (recipeSO.timer <= 0f)
+            {
+                waitingRecipeSOList.RemoveAt(i); // Remove expired recipe
+                OnRecipeFailed?.Invoke(this, EventArgs.Empty); // Notify that recipe has failed
+            }
+        }
+
+        // Update the UI every frame to reflect the timers
+        deliveryManagerUI.UpdateVisual(); // Call this every frame
     }
 
     public void DeliverRecipe(PlateKitchenObject plateKitchenObject) {
