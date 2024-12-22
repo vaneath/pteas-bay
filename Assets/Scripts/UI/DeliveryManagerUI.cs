@@ -28,7 +28,7 @@ public class DeliveryManagerUI : MonoBehaviour {
         UpdateVisual();
     }
 
-    private void UpdateVisual() {
+    public void UpdateVisual() {
         foreach (Transform child in container) {
             if (child == recipeTemplate) continue;
             Destroy(child.gameObject);
@@ -37,7 +37,9 @@ public class DeliveryManagerUI : MonoBehaviour {
         foreach (RecipeSO recipeSO in DeliveryManager.Instance.GetWaitingRecipeSOList()) {
             Transform recipeTransform = Instantiate(recipeTemplate, container);
             recipeTransform.gameObject.SetActive(true);
-            recipeTransform.GetComponent<DeliveryManagerSingleUI>().SetRecipeSO(recipeSO);
+            DeliveryManagerSingleUI recipeUI = recipeTransform.GetComponent<DeliveryManagerSingleUI>();
+            recipeUI.SetRecipeSO(recipeSO);
+            recipeUI.UpdateTimer(recipeSO.timer, recipeSO.timerMax);
         }
     }
 
