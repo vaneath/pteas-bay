@@ -22,7 +22,7 @@ public class DeliveryManager : MonoBehaviour {
 
     private List<RecipeSO> waitingRecipeSOList;
     private float spawnRecipeTimer;
-    private float spawnRecipeTimerMax;
+    private float spawnRecipeTimerMax = 4f;
     private int waitingRecipesMax = 3;
     private int successfulRecipesAmount;
     private bool firstRecipeSpawned = false;
@@ -30,17 +30,16 @@ public class DeliveryManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        spawnRecipeTimerMax = 4f;
         waitingRecipeSOList = new List<RecipeSO>();
     }
 
     private void Update() {
         spawnRecipeTimer -= Time.deltaTime;
 
-        if (spawnRecipeTimer <= 0f || waitingRecipeSOList.Count == 0) {
-            spawnRecipeTimer = firstRecipeSpawned ? UnityEngine.Random.Range(10f,20f) : 4f;
+        if (spawnRecipeTimer <= 0f) {
+            spawnRecipeTimer = firstRecipeSpawned ? UnityEngine.Random.Range(10f,20f) : spawnRecipeTimerMax;
 
-            if ((KitchenGameManager.Instance.IsGamePlaying() && waitingRecipeSOList.Count < waitingRecipesMax) || waitingRecipeSOList.Count == 0 ) {
+            if ((KitchenGameManager.Instance.IsGamePlaying() && waitingRecipeSOList.Count < waitingRecipesMax) || (waitingRecipeSOList.Count == 0 && firstRecipeSpawned)) {
                 if (!firstRecipeSpawned)
                 {
                     firstRecipeSpawned = true;
