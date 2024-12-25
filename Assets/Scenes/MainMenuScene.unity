@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.2628574, g: 0.52945745, b: 0.706889, a: 1}
+  m_IndirectSpecularColor: {r: 0.26286146, g: 0.5295875, b: 0.7069032, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -205,9 +205,9 @@ MonoBehaviour:
   interactButton: {fileID: 444380830}
   interactAlternateButton: {fileID: 350740455}
   pauseButton: {fileID: 1214360092}
-  gamepadInteractButton: {fileID: 1708316196}
-  gamepadInteractAlternateButton: {fileID: 1709643788}
-  gamepadPauseButton: {fileID: 59010403}
+  gamepadInteractButton: {fileID: 0}
+  gamepadInteractAlternateButton: {fileID: 0}
+  gamepadPauseButton: {fileID: 0}
   soundEffectsText: {fileID: 1026119744}
   musicText: {fileID: 629242636}
   moveUpText: {fileID: 1406951669}
