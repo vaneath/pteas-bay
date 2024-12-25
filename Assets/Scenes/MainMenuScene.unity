@@ -205,9 +205,6 @@ MonoBehaviour:
   interactButton: {fileID: 444380830}
   interactAlternateButton: {fileID: 350740455}
   pauseButton: {fileID: 1214360092}
-  gamepadInteractButton: {fileID: 0}
-  gamepadInteractAlternateButton: {fileID: 0}
-  gamepadPauseButton: {fileID: 0}
   soundEffectsText: {fileID: 1026119744}
   musicText: {fileID: 629242636}
   moveUpText: {fileID: 1406951669}
@@ -217,9 +214,6 @@ MonoBehaviour:
   interactText: {fileID: 1602811407}
   interactAlternateText: {fileID: 1735882481}
   pauseText: {fileID: 362530797}
-  gamepadInteractText: {fileID: 1159550087}
-  gamepadInteractAlternateText: {fileID: 752589913}
-  gamepadPauseText: {fileID: 2118894139}
   pressToRebindKeyTransform: {fileID: 1859449891}
 --- !u!1 &59010401
 GameObject:
