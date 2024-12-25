@@ -5,10 +5,7 @@ using UnityEngine;
 
 public class KitchenGameManager : MonoBehaviour {
 
-
     public static KitchenGameManager Instance { get; private set; }
-
-
 
     public event EventHandler OnStateChanged;
     public event EventHandler OnGamePaused;
@@ -29,22 +26,42 @@ public class KitchenGameManager : MonoBehaviour {
     private float gamePlayingTimerMax = 90f;
     private bool isGamePaused = false;
 
+    private GamePlayingClockUI gamePlayingClockUI;
 
     private void Awake() {
         Instance = this;
+
+        gamePlayingClockUI = FindObjectOfType<GamePlayingClockUI>();
 
         state = State.WaitingToStart;
     }
 
     private void Start() {
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
-        GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+        // GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
     }
 
-    private void GameInput_OnInteractAction(object sender, EventArgs e) {
-        if (state == State.WaitingToStart) {
-            state = State.CountdownToStart;
-            OnStateChanged?.Invoke(this, EventArgs.Empty);
+    // private void GameInput_OnInteractAction(object sender, EventArgs e)
+    // {
+    //     if (state == State.WaitingToStart)
+    //     {
+    //         state = State.CountdownToStart;
+    //         OnStateChanged?.Invoke(this, EventArgs.Empty);
+    //     }
+    // }
+    public void StartCountdownToStart() {
+        if (state == State.WaitingToStart)
+        {
+            state = State.CountdownToStart; // Set to countdown state
+            OnStateChanged?.Invoke(this, EventArgs.Empty); // Notify data updated
+        }
+    }
+
+    public void AddBonusTimeToTimer(float amount) {
+        gamePlayingTimer += amount;
+
+        if (gamePlayingClockUI != null) {
+            gamePlayingClockUI.ShowBonusTime(amount);
         }
     }
 

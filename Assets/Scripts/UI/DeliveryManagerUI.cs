@@ -39,7 +39,9 @@ public class DeliveryManagerUI : MonoBehaviour {
             recipeTransform.gameObject.SetActive(true);
             DeliveryManagerSingleUI recipeUI = recipeTransform.GetComponent<DeliveryManagerSingleUI>();
             recipeUI.SetRecipeSO(recipeSO);
-            recipeUI.UpdateTimer(recipeSO.timer, recipeSO.timerMax);
+            if (DeliveryManager.Instance.isEnableRecipeTimer) {
+                recipeUI.UpdateTimer(recipeSO.timer, recipeSO.timerMax); // Update timer only if enabled
+            }
         }
     }
 

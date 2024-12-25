@@ -19,23 +19,23 @@ public class TutorialUI : MonoBehaviour {
 
 
     private void Start() {
-        GameInput.Instance.OnBindingRebind += GameInput_OnBindingRebind;
-        KitchenGameManager.Instance.OnStateChanged += KitchenGameManager_OnStateChanged;
+        //GameInput.Instance.OnBindingRebind += GameInput_OnBindingRebind;
+        //KitchenGameManager.Instance.OnStateChanged += KitchenGameManager_OnStateChanged;
 
         UpdateVisual();
 
-        Show();
+        Hide();
     }
 
-    private void KitchenGameManager_OnStateChanged(object sender, System.EventArgs e) {
+    /*private void KitchenGameManager_OnStateChanged(object sender, System.EventArgs e) {
         if (KitchenGameManager.Instance.IsCountdownToStartActive()) {
             Hide();
         }
-    }
+    }*/
 
-    private void GameInput_OnBindingRebind(object sender, System.EventArgs e) {
+    /*private void GameInput_OnBindingRebind(object sender, System.EventArgs e) {
         UpdateVisual();
-    }
+    }*/
 
     private void UpdateVisual() {
         keyMoveUpText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Up);
