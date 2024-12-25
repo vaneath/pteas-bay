@@ -17,6 +17,9 @@ public class GameInput : MonoBehaviour {
     public event EventHandler OnPauseAction;
     public event EventHandler OnBindingRebind;
 
+    public event EventHandler OnSpeedBoostAction;
+
+    public event EventHandler OnSpeedBoostCancel;
 
     public enum Binding {
         Move_Up,
@@ -28,7 +31,8 @@ public class GameInput : MonoBehaviour {
         Pause,
         Gamepad_Interact,
         Gamepad_InteractAlternate,
-        Gamepad_Pause
+        Gamepad_Pause,
+        SpeedBoost
     }
 
 
@@ -50,14 +54,25 @@ public class GameInput : MonoBehaviour {
         playerInputActions.Player.Interact.performed += Interact_performed;
         playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
         playerInputActions.Player.Pause.performed += Pause_performed;
+        playerInputActions.Player.SpeedBoost.started += SpeedBoost_started; // Change to started
+        playerInputActions.Player.SpeedBoost.canceled += SpeedBoost_canceled; 
     }
 
     private void OnDestroy() {
         playerInputActions.Player.Interact.performed -= Interact_performed;
         playerInputActions.Player.InteractAlternate.performed -= InteractAlternate_performed;
         playerInputActions.Player.Pause.performed -= Pause_performed;
-
+        playerInputActions.Player.SpeedBoost.started -= SpeedBoost_started; // Update new event
+        playerInputActions.Player.SpeedBoost.canceled -= SpeedBoost_canceled;
         playerInputActions.Dispose();
+    }
+
+    private void SpeedBoost_started(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        OnSpeedBoostAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void SpeedBoost_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        OnSpeedBoostCancel?.Invoke(this, EventArgs.Empty);
     }
 
     private void Pause_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
@@ -97,6 +112,9 @@ public class GameInput : MonoBehaviour {
                 return playerInputActions.Player.InteractAlternate.bindings[0].ToDisplayString();
             case Binding.Pause:
                 return playerInputActions.Player.Pause.bindings[0].ToDisplayString();
+            case Binding.SpeedBoost:
+                Debug.Log($"SpeedBoost Bindings Count: {playerInputActions.Player.SpeedBoost.bindings.Count}");
+                return playerInputActions.Player.SpeedBoost.bindings[0].ToDisplayString();
             case Binding.Gamepad_Interact:
                 return playerInputActions.Player.Interact.bindings[1].ToDisplayString();
             case Binding.Gamepad_InteractAlternate:
@@ -140,6 +158,10 @@ public class GameInput : MonoBehaviour {
                 break;
             case Binding.Pause:
                 inputAction = playerInputActions.Player.Pause;
+                bindingIndex = 0;
+                break;
+            case Binding.SpeedBoost:
+                inputAction = playerInputActions.Player.SpeedBoost;
                 bindingIndex = 0;
                 break;
             case Binding.Gamepad_Interact:
