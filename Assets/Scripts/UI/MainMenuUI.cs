@@ -4,38 +4,54 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MainMenuUI : MonoBehaviour {
-
+public class MainMenuUI : MonoBehaviour
+{
 
     [SerializeField] private Button playButton;
     [SerializeField] private Button aboutUsButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private Button optionsButton;
 
-
-    private void Awake() {
-        playButton.onClick.AddListener(() => {
+    [SerializeField] private GameObject optionsUI;
+    private void Awake()
+    {
+        playButton.onClick.AddListener(() =>
+        {
             Loader.Load(Loader.Scene.GameScene);
         });
-        aboutUsButton.onClick.AddListener(() => {
+        aboutUsButton.onClick.AddListener(() =>
+        {
             Loader.Load(Loader.Scene.AboutUsScene);
         });
-        quitButton.onClick.AddListener(() => {
+        quitButton.onClick.AddListener(() =>
+        {
             Application.Quit();
         });
-        optionsButton.onClick.AddListener(() => {
+        optionsButton.onClick.AddListener(() =>
+        {
             Hide();
             OptionsUI.Instance.Show(Show);
         });
 
         Time.timeScale = 1f;
     }
-    
-    private void Show() {
+
+    private void Start()
+    {
+        if (optionsUI != null)
+        {
+            optionsUI.SetActive(false);
+        }
+        Show(); // Show main menu
+    }
+
+    private void Show()
+    {
         gameObject.SetActive(true);
     }
 
-    private void Hide() {
+    private void Hide()
+    {
         gameObject.SetActive(false);
     }
 }
