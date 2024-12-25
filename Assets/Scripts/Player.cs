@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour, IKitchenObjectParent
 {
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     [SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
+    [SerializeField] private Image energyBarImage;
 
 
     private bool isWalking;
@@ -32,6 +34,11 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private bool isSpeedBoosted;
 
+    private float maxEnergy = 100f; // Total energy
+    private float currentEnergy; // Current energy level
+    private float energyCost = 20f; // Energy needed for each speed boost
+    private float energyRegenerationRate = 10f;
+    private Coroutine energyRegenerationCoroutine;
 
     private void Awake()
     {
@@ -40,6 +47,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent
             Debug.LogError("There is more than one Player instance");
         }
         Instance = this;
+        currentEnergy = maxEnergy;
+        energyBarImage.gameObject.SetActive(true);
     }
 
     private void Start()
@@ -72,8 +81,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void Update()
     {
+        Debug.Log("Current energy: " + currentEnergy + ", SpeedBoost: " + isSpeedBoosted);
         HandleMovement();
         HandleInteractions();
+        UpdateEnergyBar();
     }
 
     public bool IsWalking()
@@ -210,13 +221,67 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         return kitchenObject != null;
     }
 
+    private void UpdateEnergyBar() {
+        if (energyBarImage != null) {
+            energyBarImage.fillAmount = currentEnergy / maxEnergy; // Update the fill amount of UI element
+        }
+    }
+
     private void GameInput_OnSpeedBoostAction(object sender, EventArgs e) {
         MoveSpeedBoost();
     }
 
     private void MoveSpeedBoost() {
-        moveSpeed = 12f;
-        isSpeedBoosted = true;
+        if (isSpeedBoosted) return; // Prevent multiple boosts
+
+        if (currentEnergy >= energyCost) {
+            moveSpeed = 12f; // Boost speed
+            currentEnergy -= energyCost; // Deduct energy cost
+            isSpeedBoosted = true;
+
+            // Start energy consumption coroutine
+            StartCoroutine(ConsumeEnergy());
+            // Start energy regeneration if it's not already running
+            if (energyRegenerationCoroutine != null) {
+                StopCoroutine(energyRegenerationCoroutine);
+            }
+            energyRegenerationCoroutine = StartCoroutine(RegenerateEnergy());
+        }
+    }
+
+    // New Coroutine to consume energy continuously
+    private IEnumerator ConsumeEnergy() {
+        while (isSpeedBoosted) {
+            // Deduct energy continuously
+            if (currentEnergy > 0) {
+                currentEnergy -= energyCost * Time.deltaTime; // Deduct energy over time
+                currentEnergy = Mathf.Clamp(currentEnergy, 0, maxEnergy); // Clamp to max energy
+                UpdateEnergyBar(); // Update UI
+            } else {
+                ResetSpeed(); // Reset speed when energy runs out
+                break; // Exit the loop if energy is depleted
+            }
+
+            yield return null; // Wait for the next frame
+        }
+    }
+
+    private IEnumerator RegenerateEnergy() {
+        while (currentEnergy < maxEnergy) {
+            // Check if the player is currently boosted
+            if (!isSpeedBoosted) {
+                currentEnergy += energyRegenerationRate * Time.deltaTime; // Regenerate energy
+                currentEnergy = Mathf.Clamp(currentEnergy, 0, maxEnergy); // Clamp to max energy
+                
+                // Update energy bar UI for the visual feedback
+                UpdateEnergyBar();
+            }
+            
+            // Wait for a frame before checking again
+            yield return null; 
+        }
+
+        energyRegenerationCoroutine = null; // Reset coroutine reference when done
     }
 
     private void GameInput_OnSpeedBoostCancel(object sender, EventArgs e) {
