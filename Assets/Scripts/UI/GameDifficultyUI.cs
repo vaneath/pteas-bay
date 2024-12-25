@@ -3,49 +3,109 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameDifficultyUI : MonoBehaviour {
+public class GameDifficultyUI : MonoBehaviour
+{
 
 
     [SerializeField] private Button easyButton;
     [SerializeField] private Button mediumButton;
     [SerializeField] private Button hardButton;
+    [SerializeField] private Button startGameButton;
 
-
-    private void Awake() {
-        /*resumeButton.onClick.AddListener(() => {
-            KitchenGameManager.Instance.TogglePauseGame();
-        });
-        mainMenuButton.onClick.AddListener(() => {
-            Loader.Load(Loader.Scene.MainMenuScene);
-        });
-        optionsButton.onClick.AddListener(() => {
-            Hide();
-            OptionsUI.Instance.Show(Show);
-        });*/
+    public enum Difficulty
+    {
+        Easy,
+        Medium,
+        Hard
     }
 
-    private void Start() {
-        /*KitchenGameManager.Instance.OnGamePaused += KitchenGameManager_OnGamePaused;
+
+    private void Awake()
+    {
+        startGameButton.interactable = false;
+        easyButton.onClick.AddListener(() => OnDifficultyButtonClick(Difficulty.Easy));
+        mediumButton.onClick.AddListener(() => OnDifficultyButtonClick(Difficulty.Medium));
+        hardButton.onClick.AddListener(() => OnDifficultyButtonClick(Difficulty.Hard));
+        startGameButton.onClick.AddListener(() => OnStartButtonClick());
+    }
+
+    private void OnDifficultyButtonClick(Difficulty difficulty)
+    {
+        startGameButton.interactable = true;
+
+        ColorBlock colors = easyButton.colors;
+        colors.normalColor = Color.grey;
+        easyButton.colors = colors;
+
+        colors = mediumButton.colors;
+        colors.normalColor = Color.grey;
+        mediumButton.colors = colors;
+
+        colors = hardButton.colors;
+        colors.normalColor = Color.grey;
+        hardButton.colors = colors;
+
+        switch (difficulty)
+        {
+            case Difficulty.Easy:
+                easyButton.colors = ChangeColorToSelected(easyButton.colors);
+                break;
+            case Difficulty.Medium:
+                mediumButton.colors = ChangeColorToSelected(mediumButton.colors);
+                break;
+            case Difficulty.Hard:
+                hardButton.colors = ChangeColorToSelected(hardButton.colors);
+                break;
+        }
+
+    }
+
+    private ColorBlock ChangeColorToSelected(ColorBlock buttonColors)
+    {
+        buttonColors.normalColor = Color.green;
+        buttonColors.highlightedColor = Color.yellow;
+        return buttonColors;
+    }
+
+    private void OnStartButtonClick()
+    {
+        if (KitchenGameManager.Instance.IsGamePlaying() == false &&
+            KitchenGameManager.Instance.IsCountdownToStartActive() == false)
+        {
+            KitchenGameManager.Instance.StartCountdownToStart();
+        }
+    }
+
+    private void Start()
+    {
         KitchenGameManager.Instance.OnGameUnpaused += KitchenGameManager_OnGameUnpaused;
+        KitchenGameManager.Instance.OnStateChanged += KitchenGameManager_OnStateChanged;
 
-        Hide();*/
+        Show();
     }
 
-    /*private void KitchenGameManager_OnGameUnpaused(object sender, System.EventArgs e) {
+    private void KitchenGameManager_OnGameUnpaused(object sender, System.EventArgs e)
+    {
         Hide();
     }
 
-    private void KitchenGameManager_OnGamePaused(object sender, System.EventArgs e) {
-        Show();
+    private void KitchenGameManager_OnStateChanged(object sender, System.EventArgs e)
+    {
+        if (KitchenGameManager.Instance.IsCountdownToStartActive())
+        {
+            Hide();
+        }
     }
-*/
-    private void Show() {
+
+    private void Show()
+    {
         gameObject.SetActive(true);
 
         //resumeButton.Select();
     }
 
-    private void Hide() {
+    private void Hide()
+    {
         gameObject.SetActive(false);
     }
 

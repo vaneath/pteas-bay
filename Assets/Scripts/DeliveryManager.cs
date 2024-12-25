@@ -108,6 +108,7 @@ public class DeliveryManager : MonoBehaviour {
 
                     waitingRecipeSOList.RemoveAt(i);
 
+                    KitchenGameManager.Instance.AddBonusTimeToTimer(5f);
                     OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
                     OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
                     return;
