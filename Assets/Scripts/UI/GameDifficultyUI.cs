@@ -49,12 +49,16 @@ public class GameDifficultyUI : MonoBehaviour
         {
             case Difficulty.Easy:
                 easyButton.colors = ChangeColorToSelected(easyButton.colors);
+                DeliveryManager.Instance.disableRecipeTimer();
                 break;
             case Difficulty.Medium:
                 mediumButton.colors = ChangeColorToSelected(mediumButton.colors);
+                DeliveryManager.Instance.enableRecipeTimer();
                 break;
             case Difficulty.Hard:
                 hardButton.colors = ChangeColorToSelected(hardButton.colors);
+                DeliveryManager.Instance.enableRecipeTimer();
+                DeliveryManager.Instance.setMaxWaitingRecipe(4);
                 break;
         }
 

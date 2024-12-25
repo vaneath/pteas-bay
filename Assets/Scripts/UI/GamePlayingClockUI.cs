@@ -19,8 +19,16 @@ public class GamePlayingClockUI : MonoBehaviour {
     }
 
     public void ShowBonusTime(float bonusAmount) {
-        bonusTimeText.text = $"+{bonusAmount}s!";
-        bonusTimeText.gameObject.SetActive(true);
+        if (bonusAmount < 0) {
+            bonusTimeText.text = $"-{bonusAmount}s!";
+            bonusTimeText.gameObject.SetActive(true);
+            bonusTimeText.color = Color.red;
+        } else {
+            bonusTimeText.text = $"+{bonusAmount}s!"; 
+            bonusTimeText.gameObject.SetActive(true);
+            bonusTimeText.color = Color.green; 
+        }
+
         StartCoroutine(HideBonusTimeText());
     }
 

@@ -27,6 +27,7 @@ public class DeliveryManager : MonoBehaviour {
     private int successfulRecipesAmount;
     private bool firstRecipeSpawned = false;
 
+    public bool isEnableRecipeTimer = false;
 
     private void Awake() {
         Instance = this;
@@ -37,13 +38,13 @@ public class DeliveryManager : MonoBehaviour {
         spawnRecipeTimer -= Time.deltaTime;
 
         if (spawnRecipeTimer <= 0f) {
-            spawnRecipeTimer = firstRecipeSpawned ? UnityEngine.Random.Range(10f,20f) : spawnRecipeTimerMax;
+            spawnRecipeTimer = firstRecipeSpawned ? UnityEngine.Random.Range(10f,15f) : spawnRecipeTimerMax;
 
             if ((KitchenGameManager.Instance.IsGamePlaying() && waitingRecipeSOList.Count < waitingRecipesMax) || (waitingRecipeSOList.Count == 0 && firstRecipeSpawned)) {
                 if (!firstRecipeSpawned)
                 {
                     firstRecipeSpawned = true;
-                    spawnRecipeTimer = UnityEngine.Random.Range(10f, 20f);
+                    spawnRecipeTimer = UnityEngine.Random.Range(10f, 15f);
                 }
 
                 RecipeSO originalRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
@@ -52,7 +53,7 @@ public class DeliveryManager : MonoBehaviour {
                 newRecipeSO.recipeName = originalRecipeSO.recipeName;
                 newRecipeSO.kitchenObjectSOList = new List<KitchenObjectSO>(originalRecipeSO.kitchenObjectSOList); // Clone the list
                 newRecipeSO.customer = customerListSO.customerSOList[UnityEngine.Random.Range(0, customerListSO.customerSOList.Count)];
-                newRecipeSO.timerMax = UnityEngine.Random.Range(25f, 45f);
+                newRecipeSO.timerMax = UnityEngine.Random.Range(30f, 45f);
                 newRecipeSO.timer = newRecipeSO.timerMax;
 
                 waitingRecipeSOList.Add(newRecipeSO);
@@ -63,12 +64,15 @@ public class DeliveryManager : MonoBehaviour {
         for (int i = waitingRecipeSOList.Count - 1; i >= 0; i--)
         {
             RecipeSO recipeSO = waitingRecipeSOList[i];
-            recipeSO.timer -= Time.deltaTime; // Decrement timer
+           if (isEnableRecipeTimer) {
+                recipeSO.timer -= Time.deltaTime;
+            }
 
             // Check if the recipe has expired
             if (recipeSO.timer <= 0f)
             {
                 waitingRecipeSOList.RemoveAt(i); // Remove expired recipe
+                KitchenGameManager.Instance.AddBonusTimeToTimer(-5f);
                 OnRecipeFailed?.Invoke(this, EventArgs.Empty); // Notify that recipe has failed
             }
         }
@@ -129,4 +133,15 @@ public class DeliveryManager : MonoBehaviour {
         return successfulRecipesAmount;
     }
 
+    public void enableRecipeTimer () {
+        isEnableRecipeTimer = true;
+    }
+
+    public void disableRecipeTimer () {
+        isEnableRecipeTimer = false;
+    }
+
+    public void setMaxWaitingRecipe (int amount) {
+        waitingRecipesMax = amount;
+    }
 }

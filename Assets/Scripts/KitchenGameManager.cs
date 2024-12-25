@@ -70,7 +70,6 @@ public class KitchenGameManager : MonoBehaviour {
     }
 
     private void Update() {
-        Debug.Log(gamePlayingTimer);
         switch (state) {
             case State.WaitingToStart:
                 break;
